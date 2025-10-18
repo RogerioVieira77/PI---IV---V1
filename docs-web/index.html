@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IoT Gateway · Documentação Arquitetônica</title>
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="main-header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-network-wired"></i>
+                    <span>IoT Gateway · Arquitetura</span>
+                </div>
+                <nav class="main-nav">
+                    <a href="#home" class="nav-link active">Início</a>
+                    <a href="#architecture" class="nav-link">Proposta Arquitetônica</a>
+                    <a href="#technical" class="nav-link">Documentação Técnica</a>
+                    <a href="#integrations" class="nav-link">Integrações</a>
+                </nav>
+                <div class="header-actions">
+                    <select id="scopeSelector" class="scope-selector">
+                        <option value="GLOBAL">Scope: GLOBAL</option>
+                        <option value="BACKEND">Scope: BACKEND</option>
+                        <option value="FRONTEND">Scope: FRONTEND</option>
+                        <option value="SENSORS">Scope: SENSORS</option>
+                    </select>
+                    <button class="btn-export" onclick="exportDocs()">
+                        <i class="fas fa-download"></i> Export
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h3>PAGE TREE</h3>
+        </div>
+        <nav class="sidebar-nav">
+            <div class="nav-section">
+                <div class="nav-item" onclick="navigateTo('home')">
+                    <i class="fas fa-home"></i> Bem-vindo
+                </div>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Documentação Técnica</div>
+                <div class="nav-item" onclick="navigateTo('architecture')">
+                    <i class="fas fa-sitemap"></i> Proposta Arquitetônica
+                </div>
+                <div class="nav-item" onclick="navigateTo('solution-model')">
+                    <i class="fas fa-cubes"></i> Modelo de Solução
+                </div>
+                <div class="nav-item" onclick="navigateTo('topology')">
+                    <i class="fas fa-project-diagram"></i> Modelo de Topologia
+                </div>
+                <div class="nav-item" onclick="navigateTo('integrations')">
+                    <i class="fas fa-plug"></i> Integrações
+                </div>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Especificações</div>
+                <div class="nav-item" onclick="navigateTo('api-specs')">
+                    <i class="fas fa-code"></i> Especificações API
+                </div>
+                <div class="nav-item" onclick="navigateTo('data-model')">
+                    <i class="fas fa-database"></i> Modelo de Dados
+                </div>
+                <div class="nav-item" onclick="navigateTo('security')">
+                    <i class="fas fa-shield-alt"></i> Segurança
+                </div>
+                <div class="nav-item" onclick="navigateTo('operations')">
+                    <i class="fas fa-cogs"></i> Operações
+                </div>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Gestão</div>
+                <div class="nav-item" onclick="navigateTo('checklist')">
+                    <i class="fas fa-tasks"></i> Checklist / Intake
+                </div>
+                <div class="nav-item" onclick="navigateTo('endpoints')">
+                    <i class="fas fa-exchange-alt"></i> Endpoints
+                </div>
+                <div class="nav-item" onclick="navigateTo('versioning')">
+                    <i class="fas fa-code-branch"></i> Política de Versionado
+                </div>
+                <div class="nav-item" onclick="navigateTo('adrs')">
+                    <i class="fas fa-file-alt"></i> ADRs
+                </div>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Home Section -->
+            <section id="home" class="content-section active">
+                <div class="hero">
+                    <h1>IoT Gateway · Documentação Arquitetônica</h1>
+                    <p class="hero-subtitle">Sistema de integração multi-protocolo para sensores IoT</p>
+                    <div class="version-badge">v1.0.0 - Fase 2 Completa</div>
+                </div>
+
+                <div class="cards-grid">
+                    <div class="card" onclick="navigateTo('architecture')">
+                        <div class="card-icon">
+                            <i class="fas fa-sitemap"></i>
+                        </div>
+                        <h3>Proposta Arquitetônica</h3>
+                        <p>Visão geral da arquitetura do sistema, componentes e fluxos de dados</p>
+                    </div>
+
+                    <div class="card" onclick="navigateTo('solution-model')">
+                        <div class="card-icon">
+                            <i class="fas fa-cubes"></i>
+                        </div>
+                        <h3>Modelo de Solução</h3>
+                        <p>Estrutura da solução, módulos e suas responsabilidades</p>
+                    </div>
+
+                    <div class="card" onclick="navigateTo('topology')">
+                        <div class="card-icon">
+                            <i class="fas fa-project-diagram"></i>
+                        </div>
+                        <h3>Modelo de Topologia</h3>
+                        <p>Topologia de rede, distribuição de componentes e infraestrutura</p>
+                    </div>
+
+                    <div class="card" onclick="navigateTo('integrations')">
+                        <div class="card-icon">
+                            <i class="fas fa-plug"></i>
+                        </div>
+                        <h3>Integrações</h3>
+                        <p>Protocolos suportados: LoRa, Zigbee, Sigfox, RFID via MQTT</p>
+                    </div>
+                </div>
+
+                <div class="info-section">
+                    <h2>Sobre o Projeto</h2>
+                    <p>Sistema de gateway IoT para integração de múltiplos protocolos de sensores (LoRa, Zigbee, Sigfox, RFID) com comunicação via MQTT para processamento e armazenamento de dados.</p>
+                    
+                    <div class="tech-stack">
+                        <h3>Stack Tecnológico</h3>
+                        <div class="tech-badges">
+                            <span class="badge">Python 3.x</span>
+                            <span class="badge">MQTT / Paho-MQTT</span>
+                            <span class="badge">Eclipse Mosquitto</span>
+                            <span class="badge">LoRa</span>
+                            <span class="badge">Zigbee</span>
+                            <span class="badge">Sigfox</span>
+                            <span class="badge">RFID</span>
+                            <span class="badge">JSON</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Architecture Section -->
+            <section id="architecture" class="content-section">
+                <div class="breadcrumb">
+                    <a href="#home">Início</a> / <span>Proposta Arquitetônica</span>
+                </div>
+                
+                <h1>Proposta Arquitetônica</h1>
+                <p class="section-intro">Visão completa da arquitetura do sistema IoT Gateway</p>
+
+                <div class="content-card">
+                    <h2><i class="fas fa-lightbulb"></i> Visão Geral</h2>
+                    <p>O sistema IoT Gateway é uma solução modular para integração de múltiplos protocolos de sensores IoT, centralizando a comunicação através do protocolo MQTT e fornecendo uma interface unificada para processamento de dados.</p>
+                </div>
+
+                <div class="content-card">
+                    <h2><i class="fas fa-layer-group"></i> Camadas da Arquitetura</h2>
+                    
+                    <div class="architecture-layer">
+                        <h3>1. Camada de Sensores</h3>
+                        <ul>
+                            <li><strong>LoRa Sensor:</strong> Comunicação de longo alcance, baixo consumo</li>
+                            <li><strong>Zigbee Sensor:</strong> Redes mesh, automação residencial</li>
+                            <li><strong>Sigfox Sensor:</strong> Comunicação global, IoT massivo</li>
+                            <li><strong>RFID Sensor:</strong> Identificação por radiofrequência</li>
+                        </ul>
+                    </div>
+
+                    <div class="architecture-layer">
+                        <h3>2. Camada de Gateway</h3>
+                        <ul>
+                            <li><strong>MQTT Client:</strong> Cliente MQTT para publicação e subscrição</li>
+                            <li><strong>Message Formatter:</strong> Formatação e validação de mensagens</li>
+                            <li><strong>Config Loader:</strong> Gerenciamento de configurações</li>
+                            <li><strong>Gateway Core:</strong> Orquestração dos sensores</li>
+                        </ul>
+                    </div>
+
+                    <div class="architecture-layer">
+                        <h3>3. Camada de Broker MQTT</h3>
+                        <ul>
+                            <li><strong>Eclipse Mosquitto:</strong> Broker MQTT (localhost:1883)</li>
+                            <li><strong>Topics:</strong> sensores/+/dados (publicação por tipo de sensor)</li>
+                            <li><strong>QoS:</strong> Quality of Service Level 1 (at least once)</li>
+                        </ul>
+                    </div>
+
+                    <div class="architecture-layer">
+                        <h3>4. Camada de Aplicação</h3>
+                        <ul>
+                            <li><strong>Subscribers:</strong> Processamento de mensagens por tópico</li>
+                            <li><strong>Data Storage:</strong> Persistência de dados (futuro)</li>
+                            <li><strong>API REST:</strong> Interface para consulta (futuro)</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="content-card">
+                    <h2><i class="fas fa-exchange-alt"></i> Fluxo de Dados</h2>
+                    <div class="flow-diagram">
+                        <pre class="diagram">
+Sensor → Gateway → MQTT Broker → Subscriber → Processamento
+  │         │           │              │            │
+  │         │           │              │            ├─→ Storage
+  │         │           │              │            └─→ Analytics
+  │         │           │              │
+  │         │           └──────────────┴─── Topics específicos
+  │         │
+  │         └─── Formatação e validação
+  │
+  └─── Coleta de dados físicos
+                        </pre>
+                    </div>
+                </div>
+
+                <div class="content-card">
+                    <h2><i class="fas fa-check-circle"></i> Características Principais</h2>
+                    <ul class="features-list">
+                        <li><i class="fas fa-check"></i> Suporte multi-protocolo (LoRa, Zigbee, Sigfox, RFID)</li>
+                        <li><i class="fas fa-check"></i> Comunicação assíncrona via MQTT</li>
+                        <li><i class="fas fa-check"></i> Arquitetura modular e extensível</li>
+                        <li><i class="fas fa-check"></i> Formatação padronizada de mensagens JSON</li>
+                        <li><i class="fas fa-check"></i> Configuração centralizada via INI</li>
+                        <li><i class="fas fa-check"></i> Simuladores para testes sem hardware</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Solution Model Section -->
+            <section id="solution-model" class="content-section">
+                <div class="breadcrumb">
+                    <a href="#home">Início</a> / <span>Modelo de Solução</span>
+                </div>
+                
+                <h1>Modelo de Solução</h1>
+                <p class="section-intro">Estrutura modular e componentes do sistema</p>
+
+                <div class="content-card">
+                    <h2><i class="fas fa-folder-tree"></i> Estrutura de Módulos</h2>
+                    
+                    <div class="module-card">
+                        <h3>📦 Backend</h3>
+                        <p><strong>Responsabilidade:</strong> Lógica de negócio e gerenciamento do gateway</p>
+                        <ul>
+                            <li><code>gateway.py</code> - Orquestrador principal do sistema</li>
+                            <li><code>mqtt_client.py</code> - Cliente MQTT para comunicação</li>
+                            <li><code>mqtt_subscriber.py</code> - Subscrição e processamento de mensagens</li>
+                            <li><code>message_formatter.py</code> - Formatação de dados JSON</li>
+                            <li><code>config_loader.py</code> - Carregamento de configurações</li>
+                        </ul>
+                    </div>
+
+                    <div class="module-card">
+                        <h3>📡 Sensores</h3>
+                        <p><strong>Responsabilidade:</strong> Simulação e interface com sensores físicos</p>
+                        <ul>
+                            <li><code>base_sensor.py</code> - Classe abstrata base para todos os sensores</li>
+                            <li><code>lora_sensor.py</code> - Implementação LoRa</li>
+                            <li><code>zigbee_sensor.py</code> - Implementação Zigbee</li>
+                            <li><code>sigfox_sensor.py</code> - Implementação Sigfox</li>
+                            <li><code>rfid_sensor.py</code> - Implementação RFID</li>
+                        </ul>
+                    </div>
+
+                    <div class="module-card">
+                        <h3>⚙️ Configuração</h3>
+                        <p><strong>Responsabilidade:</strong> Parâmetros e configurações do sistema</p>
+                        <ul>
+                            <li><code>mqtt_config.ini</code> - Configurações do broker MQTT</li>
+                            <li><code>config.ini</code> - Configurações gerais do sistema</li>
+                        </ul>
+                    </div>
+
+                    <div class="module-card">
+                        <h3>🧪 Testes</h3>
+                        <p><strong>Responsabilidade:</strong> Validação e testes do sistema</p>
+                        <ul>
+                            <li><code>test_mqtt_integration.py</code> - Testes de integração MQTT</li>
+                            <li><code>test_simuladores.py</code> - Testes dos simuladores de sensores</li>
+                            <li><code>exemplo_uso.py</code> - Exemplos de utilização</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="content-card">
+                    <h2><i class="fas fa-puzzle-piece"></i> Padrões de Design</h2>
+                    <ul>
+                        <li><strong>Factory Pattern:</strong> Criação de sensores específicos</li>
+                        <li><strong>Observer Pattern:</strong> MQTT pub/sub para eventos</li>
+                        <li><strong>Singleton Pattern:</strong> Instância única do gateway</li>
+                        <li><strong>Strategy Pattern:</strong> Diferentes estratégias de formatação</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Topology Section -->
+            <section id="topology" class="content-section">
+                <div class="breadcrumb">
+                    <a href="#home">Início</a> / <span>Modelo de Topologia</span>
+                </div>
+                
+                <h1>Modelo de Topologia</h1>
+                <p class="section-intro">Infraestrutura e distribuição de componentes</p>
+
+                <div class="content-card">
+                    <h2><i class="fas fa-network-wired"></i> Topologia de Rede</h2>
+                    <div class="topology-diagram">
+                        <pre>
+┌─────────────────────────────────────────────────────────┐
+│                    MQTT Broker                          │
+│              (Eclipse Mosquitto)                        │
+│                  localhost:1883                         │
+└────────────┬────────────────────────────┬───────────────┘
+             │                            │
+    ┌────────▼────────┐          ┌───────▼────────┐
+    │   Publishers    │          │  Subscribers   │
+    │   (Gateway)     │          │  (Listeners)   │
+    └────────┬────────┘          └────────────────┘
+             │
+    ┌────────▼────────────────────────────┐
+    │         Sensor Layer                │
+    │  ┌──────┬──────┬──────┬──────┐    │
+    │  │ LoRa │Zigbee│Sigfox│ RFID │    │
+    │  └──────┴──────┴──────┴──────┘    │
+    └─────────────────────────────────────┘
+                        </pre>
+                    </div>
+                </div>
+
+                <div class="content-card">
+                    <h2><i class="fas fa-server"></i> Componentes de Infraestrutura</h2>
+                    
+                    <table class="info-table">
+                        <thead>
+                            <tr>
+                                <th>Componente</th>
+                                <th>Tecnologia</th>
+                                <th>Porta/Protocolo</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>MQTT Broker</td>
+                                <td>Eclipse Mosquitto 2.x</td>
+                                <td>1883 (TCP)</td>
+                                <td><span class="status-badge active">Ativo</span></td>
+                            </tr>
+                            <tr>
+                                <td>Gateway Python</td>
+                                <td>Python 3.x</td>
+                                <td>-</td>
+                                <td><span class="status-badge active">Ativo</span></td>
+                            </tr>
+                            <tr>
+                                <td>Simuladores</td>
+                                <td>Python Threads</td>
+                                <td>-</td>
+                                <td><span class="status-badge active">Ativo</span></td>
+                            </tr>
+                            <tr>
+                                <td>API REST</td>
+                                <td>FastAPI (Planejado)</td>
+                                <td>8000 (HTTP)</td>
+                                <td><span class="status-badge planned">Planejado</span></td>
+                            </tr>
+                            <tr>
+                                <td>Frontend</td>
+                                <td>React/Vue (Planejado)</td>
+                                <td>3000 (HTTP)</td>
+                                <td><span class="status-badge planned">Planejado</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Integrations Section -->
+            <section id="integrations" class="content-section">
+                <div class="breadcrumb">
+                    <a href="#home">Início</a> / <span>Integrações</span>
+                </div>
+                
+                <h1>Integrações</h1>
+                <p class="section-intro">Protocolos suportados e suas características</p>
+
+                <div class="integration-grid">
+                    <div class="integration-card lora">
+                        <div class="integration-header">
+                            <i class="fas fa-broadcast-tower"></i>
+                            <h3>LoRa (Long Range)</h3>
+                        </div>
+                        <div class="integration-body">
+                            <p><strong>Características:</strong></p>
+                            <ul>
+                                <li>Alcance: até 15 km (rural)</li>
+                                <li>Frequência: 868 MHz (EU) / 915 MHz (US)</li>
+                                <li>Taxa: 0.3 - 50 kbps</li>
+                                <li>Consumo: Muito baixo</li>
+                            </ul>
+                            <p><strong>Uso:</strong> Sensores remotos, agricultura, smart cities</p>
+                            <p><strong>Topic MQTT:</strong> <code>sensores/lora/dados</code></p>
+                        </div>
+                    </div>
+
+                    <div class="integration-card zigbee">
+                        <div class="integration-header">
+                            <i class="fas fa-home"></i>
+                            <h3>Zigbee</h3>
+                        </div>
+                        <div class="integration-body">
+                            <p><strong>Características:</strong></p>
+                            <ul>
+                                <li>Alcance: 10-100 metros</li>
+                                <li>Frequência: 2.4 GHz</li>
+                                <li>Taxa: 250 kbps</li>
+                                <li>Topologia: Mesh</li>
+                            </ul>
+                            <p><strong>Uso:</strong> Automação residencial, iluminação inteligente</p>
+                            <p><strong>Topic MQTT:</strong> <code>sensores/zigbee/dados</code></p>
+                        </div>
+                    </div>
+
+                    <div class="integration-card sigfox">
+                        <div class="integration-header">
+                            <i class="fas fa-globe"></i>
+                            <h3>Sigfox</h3>
+                        </div>
+                        <div class="integration-body">
+                            <p><strong>Características:</strong></p>
+                            <ul>
+                                <li>Alcance: até 50 km</li>
+                                <li>Frequência: 868 MHz</li>
+                                <li>Taxa: 100 bps</li>
+                                <li>Mensagens: 140 msg/dia</li>
+                            </ul>
+                            <p><strong>Uso:</strong> Rastreamento, medição, alarmes</p>
+                            <p><strong>Topic MQTT:</strong> <code>sensores/sigfox/dados</code></p>
+                        </div>
+                    </div>
+
+                    <div class="integration-card rfid">
+                        <div class="integration-header">
+                            <i class="fas fa-id-card"></i>
+                            <h3>RFID</h3>
+                        </div>
+                        <div class="integration-body">
+                            <p><strong>Características:</strong></p>
+                            <ul>
+                                <li>Alcance: 0.1 - 10 metros</li>
+                                <li>Frequência: 125 kHz - 2.4 GHz</li>
+                                <li>Taxa: Instantânea</li>
+                                <li>Sem bateria (passivo)</li>
+                            </ul>
+                            <p><strong>Uso:</strong> Controle de acesso, inventário, logística</p>
+                            <p><strong>Topic MQTT:</strong> <code>sensores/rfid/dados</code></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-card">
+                    <h2><i class="fas fa-code"></i> Formato de Mensagem Padrão</h2>
+                    <pre class="code-block"><code>{
+  "tipo_sensor": "lora|zigbee|sigfox|rfid",
+  "sensor_id": "unique_sensor_identifier",
+  "timestamp": "2025-10-15T14:30:00Z",
+  "dados": {
+    "temperatura": 23.5,
+    "umidade": 65.2,
+    "bateria": 87
+  },
+  "metadata": {
+    "localizacao": "Sala A",
+    "versao": "1.0.0"
+  }
+}</code></pre>
+                </div>
+            </section>
+
+            <!-- API Specs Section -->
+            <section id="api-specs" class="content-section">
+                <div class="breadcrumb">
+                    <a href="#home">Início</a> / <span>Especificações API</span>
+                </div>
+                
+                <h1>Especificações API</h1>
+                <p class="section-intro">Endpoints e contratos da API REST (Planejado - Fase 3)</p>
+
+                <div class="content-card">
+                    <h2><i class="fas fa-info-circle"></i> Status</h2>
+                    <div class="alert alert-info">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <p>A API REST está planejada para a Fase 3 do projeto. Atualmente, a comunicação é realizada exclusivamente via MQTT.</p>
+                    </div>
+                </div>
+
+                <div class="content-card">
+                    <h2><i class="fas fa-route"></i> Endpoints Planejados</h2>
+                    
+                    <div class="endpoint">
+                        <div class="endpoint-method get">GET</div>
+                        <div class="endpoint-path">/api/v1/sensors</div>
+                        <p>Lista todos os sensores registrados</p>
+                    </div>
+
+                    <div class="endpoint">
+                        <div class="endpoint-method get">GET</div>
+                        <div class="endpoint-path">/api/v1/sensors/{sensor_id}/data</div>
+                        <p>Obtém dados de um sensor específico</p>
+                    </div>
+
+                    <div class="endpoint">
+                        <div class="endpoint-method post">POST</div>
+                        <div class="endpoint-path">/api/v1/sensors/{sensor_id}/command</div>
+                        <p>Envia comando para um sensor</p>
+                    </div>
+
+                    <div class="endpoint">
+                        <div class="endpoint-method get">GET</div>
+                        <div class="endpoint-path">/api/v1/health</div>
+                        <p>Verifica o status de saúde do sistema</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Data Model Section -->
+            <section id="data-model" class="content-section">
+                <div class="breadcrumb">
+                    <a href="#home">Início</a> / <span>Modelo de Dados</span>
+                </div>
+                
+                <h1>Modelo de Dados</h1>
+                <p class="section-intro">Estrutura de dados e schemas utilizados</p>
+
+                <div class="content-card">
+                    <h2><i class="fas fa-database"></i> Entidades Principais</h2>
+                    
+                    <div class="data-model">
+                        <h3>Sensor</h3>
+                        <pre class="code-block"><code>{
+  "id": "string (UUID)",
+  "tipo": "lora|zigbee|sigfox|rfid",
+  "nome": "string",
+  "localizacao": "string",
+  "status": "ativo|inativo|manutencao",
+  "ultima_comunicacao": "datetime",
+  "configuracao": {
+    "intervalo_leitura": "integer (segundos)",
+    "qos": "integer (0-2)"
+  }
+}</code></pre>
+                    </div>
+
+                    <div class="data-model">
+                        <h3>Leitura de Sensor</h3>
+                        <pre class="code-block"><code>{
+  "id": "string (UUID)",
+  "sensor_id": "string",
+  "timestamp": "datetime",
+  "valores": {
+    "temperatura": "float",
+    "umidade": "float",
+    "pressao": "float",
+    "bateria": "integer (0-100)"
+  },
+  "qualidade_sinal": "integer (0-100)"
+}</code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Security Section -->
+            <section id="security" class="content-section">
+                <div class="breadcrumb">
+                    <a href="#home">Início</a> / <span>Segurança</span>
+                </div>
+                
+                <h1>Segurança</h1>
+                <p class="section-intro">Políticas e implementações de segurança</p>
+
+                <div class="content-card">
+                    <h2><i class="fas fa-lock"></i> Medidas de Segurança Implementadas</h2>
+                    <ul class="security-list">
+                        <li><i class="fas fa-check-circle"></i> Comunicação MQTT em rede local</li>
+                        <li><i class="fas fa-check-circle"></i> Validação de formato de mensagens JSON</li>
+                        <li><i class="fas fa-check-circle"></i> Identificação única de sensores</li>
+                    </ul>
+                </div>
+
+                <div class="content-card">
+                    <h2><i class="fas fa-shield-alt"></i> Melhorias Planejadas (Fase 3)</h2>
+                    <ul class="security-list">
+                        <li><i class="fas fa-clock"></i> Autenticação MQTT (usuário/senha)</li>
+                        <li><i class="fas fa-clock"></i> TLS/SSL para MQTT</li>
+                        <li><i class="fas fa-clock"></i> JWT para API REST</li>
+                        <li><i class="fas fa-clock"></i> Rate limiting</li>
+                        <li><i class="fas fa-clock"></i> Logs de auditoria</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Operations Section -->
+            <section id="operations" class="content-section">
+                <div class="breadcrumb">
+                    <a href="#home">Início</a> / <span>Operações</span>
+                </div>
+                
+                <h1>Operações</h1>
+                <p class="section-intro">Guias operacionais e procedimentos</p>
+
+                <div class="content-card">
+                    <h2><i class="fas fa-play-circle"></i> Inicialização do Sistema</h2>
+                    <ol>
+                        <li>Iniciar o broker Mosquitto: <code>mosquitto -v</code></li>
+                        <li>Ativar ambiente virtual: <code>.venv\Scripts\activate</code></li>
+                        <li>Executar o gateway: <code>python backend/gateway/gateway.py</code></li>
+                        <li>Executar simuladores: <code>python tests/test_simuladores.py</code></li>
+                    </ol>
+                </div>
+
+                <div class="content-card">
+                    <h2><i class="fas fa-tools"></i> Monitoramento</h2>
+                    <ul>
+                        <li>Logs do Mosquitto: Verificar console do broker</li>
+                        <li>Logs do Gateway: Saída padrão do Python</li>
+                        <li>Status dos sensores: Verificar última comunicação</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Other sections placeholders -->
+            <section id="checklist" class="content-section">
+                <div class="breadcrumb">
+                    <a href="#home">Início</a> / <span>Checklist</span>
+                </div>
+                <h1>Checklist / Intake</h1>
+                <p>Checklists de implementação e validação do projeto.</p>
+            </section>
+
+            <section id="endpoints" class="content-section">
+                <div class="breadcrumb">
+                    <a href="#home">Início</a> / <span>Endpoints</span>
+                </div>
+                <h1>Endpoints</h1>
+                <p>Documentação detalhada de todos os endpoints da API.</p>
+            </section>
+
+            <section id="versioning" class="content-section">
+                <div class="breadcrumb">
+                    <a href="#home">Início</a> / <span>Política de Versionado</span>
+                </div>
+                <h1>Política de Versionado</h1>
+                <p>Estratégia de versionamento do sistema (Semantic Versioning).</p>
+            </section>
+
+            <section id="adrs" class="content-section">
+                <div class="breadcrumb">
+                    <a href="#home">Início</a> / <span>ADRs</span>
+                </div>
+                <h1>Architecture Decision Records</h1>
+                <p>Registro de decisões arquiteturais importantes.</p>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="container">
+            <p>&copy; 2025 IoT Gateway Project · Documentação Arquitetônica v1.0.0</p>
+            <p>Última atualização: 15 de Outubro de 2025</p>
+        </div>
+    </footer>
+
+    <script src="assets/js/main.js"></script>
+</body>
+</html>
