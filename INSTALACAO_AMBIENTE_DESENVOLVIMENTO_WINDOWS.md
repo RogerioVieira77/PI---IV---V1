@@ -596,6 +596,18 @@ pip install -r backend\requirements-phase2.txt
 pip install -r backend\requirements-phase3.txt
 ```
 
+**⚠️ IMPORTANTE - Problema Comum no Windows:**
+
+Se você receber erro ao instalar `mysqlclient` (erro `fatal error C1083: mysql.h: No such file or directory`), é porque este pacote precisa compilar código C e não encontra os arquivos de desenvolvimento do MySQL.
+
+**Solução:** O arquivo `requirements-phase3.txt` já foi ajustado para usar apenas **PyMySQL** (Python puro, sem compilação). Se você ainda tiver o erro:
+
+1. Edite `backend\requirements-phase3.txt`
+2. Comente ou remova a linha `mysqlclient==2.2.0`
+3. Execute novamente: `pip install -r backend\requirements-phase3.txt`
+
+O PyMySQL funciona perfeitamente como driver MySQL para SQLAlchemy no Windows.
+
 ### Todas as Dependências (Recomendado)
 
 Para instalar tudo de uma vez:
@@ -1125,6 +1137,66 @@ Certifique-se de estar na pasta correta e que o FLASK_APP está configurado:
 ```powershell
 $env:FLASK_APP = "backend/app.py"
 flask run
+```
+
+### Problema: Erro ao instalar mysqlclient no Windows
+
+**Erro:** `fatal error C1083: Não é possível abrir arquivo incluir: 'mysql.h': No such file or directory`
+
+**Causa:** O pacote `mysqlclient` precisa compilar código C e não encontra os arquivos de desenvolvimento (headers) do MySQL/MariaDB.
+
+**Solução 1 (Recomendada):** Usar apenas PyMySQL
+
+O arquivo `requirements-phase3.txt` já foi ajustado para comentar o `mysqlclient`. Se você ainda tiver o erro:
+
+```powershell
+# Editar o arquivo requirements
+notepad backend\requirements-phase3.txt
+
+# Comente ou remova a linha:
+# mysqlclient==2.2.0
+
+# Instale novamente
+pip install -r backend\requirements-phase3.txt
+```
+
+**Solução 2:** Instalar MySQL Connector/C
+
+Se você realmente precisar do `mysqlclient`:
+
+1. Baixe o MySQL Connector/C: https://dev.mysql.com/downloads/connector/c/
+2. Instale em `C:\mariadb-connector` ou `C:\mysql-connector`
+3. Adicione às variáveis de ambiente:
+   - `MYSQLCLIENT_CFLAGS=-I"C:\mysql-connector\include"`
+   - `MYSQLCLIENT_LDFLAGS=-L"C:\mysql-connector\lib"`
+4. Tente instalar novamente: `pip install mysqlclient`
+
+**Solução 3:** Usar wheel pré-compilado
+
+```powershell
+# Baixe o wheel de https://www.lfd.uci.edu/~gohlke/pythonlibs/#mysqlclient
+# Instale o arquivo .whl:
+pip install mysqlclient-2.2.0-cp312-cp312-win_amd64.whl
+```
+
+**Nota:** Para este projeto, **PyMySQL é suficiente** e funciona perfeitamente no Windows sem necessidade de compilação.
+
+### Problema: Erro ao instalar gunicorn no Windows
+
+**Erro:** `gunicorn` não funciona no Windows (é específico para Unix/Linux)
+
+**Solução:** Use **waitress** (já incluído no requirements-phase3.txt)
+
+```powershell
+pip install waitress
+```
+
+Para rodar o servidor em produção no Windows:
+
+```powershell
+# Ao invés de: gunicorn app:app
+# Use:
+waitress-serve --host=0.0.0.0 --port=5000 backend.app:app
 ```
 
 ### Problema: Erro de conexão com MySQL
