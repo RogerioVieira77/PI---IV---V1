@@ -17,7 +17,7 @@ echo -e "${BLUE}========================================${NC}"
 echo -e "${BLUE}Configurando Serviço Systemd${NC}"
 echo -e "${BLUE}========================================${NC}\n"
 
-PROJECT_DIR="/opt/iot-gateway"
+PROJECT_DIR="/opt/iot-gateway/PI---IV---V1"
 SERVICE_NAME="iot-gateway"
 SERVICE_FILE="/etc/systemd/system/${SERVICE_NAME}.service"
 
@@ -45,11 +45,11 @@ Type=simple
 User=$CURRENT_USER
 Group=$CURRENT_USER
 WorkingDirectory=$PROJECT_DIR
-Environment="PATH=$PROJECT_DIR/venv/bin:/usr/local/bin:/usr/bin:/bin"
+Environment="PATH=/opt/iot-gateway/venv/bin:/usr/local/bin:/usr/bin:/bin"
 Environment="PYTHONUNBUFFERED=1"
 
 # Comando de execução
-ExecStart=$PROJECT_DIR/venv/bin/python backend/gateway/gateway.py
+ExecStart=/opt/iot-gateway/venv/bin/python backend/gateway/gateway.py
 
 # Reiniciar em caso de falha
 Restart=on-failure

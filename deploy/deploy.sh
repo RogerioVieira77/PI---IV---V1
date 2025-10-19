@@ -14,7 +14,8 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m'
 
-PROJECT_DIR="/opt/iot-gateway"
+PROJECT_DIR="/opt/iot-gateway/PI---IV---V1"
+VENV_DIR="/opt/iot-gateway/venv"
 SERVICE_NAME="iot-gateway"
 
 echo -e "${BLUE}========================================${NC}"
@@ -100,7 +101,7 @@ echo -e "\n${BLUE}4. Verificando dependências Python...${NC}"
 
 if [ -f "requirements.txt" ]; then
     echo -e "${BLUE}ℹ️  Ativando ambiente virtual...${NC}"
-    source venv/bin/activate
+    source $VENV_DIR/bin/activate
     
     echo -e "${BLUE}ℹ️  Instalando/atualizando dependências...${NC}"
     pip install -r requirements.txt --upgrade

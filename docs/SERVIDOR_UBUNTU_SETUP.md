@@ -129,11 +129,20 @@ pip3 --version
 ### 4.1 Criar ambiente virtual (recomendado)
 
 ```bash
-# Criar diretório para o projeto
-mkdir -p /opt/iot-gateway
+# Criar diretório para o projeto (com sudo)
+sudo mkdir -p /opt/iot-gateway
+
+# IMPORTANTE: Ajustar proprietário para seu usuário
+# Substitua 'rogeriovieira' pelo seu usuário
+sudo chown -R $USER:$USER /opt/iot-gateway
+
+# Verificar permissões
+ls -la /opt/iot-gateway/
+
+# Navegar para o diretório
 cd /opt/iot-gateway
 
-# Criar ambiente virtual
+# Criar ambiente virtual (agora sem sudo)
 python3 -m venv venv
 
 # Ativar ambiente virtual
@@ -143,6 +152,8 @@ source venv/bin/activate
 which python
 # Deve mostrar: /opt/iot-gateway/venv/bin/python
 ```
+
+**⚠️ ATENÇÃO:** Sempre que criar diretórios com `sudo` em `/opt/`, ajuste as permissões para seu usuário!
 
 ---
 
@@ -290,29 +301,38 @@ sudo ufw status numbered
 
 ## 7. Deploy da Aplicação IoT Gateway
 
-### 7.1 Transferir Código do Windows para o Servidor
+### 7.1 Clonar Repositório Git
 
-**Do Windows (PowerShell):**
-
-```powershell
-# Navegar até a pasta do projeto
-cd "c:\PI - IV - V1"
-
-# Transferir via SCP (substitua 'usuario' pelo seu usuário)
-scp -r . usuario@192.168.0.194:/opt/iot-gateway/
-```
-
-**Alternativa: Usar Git (Recomendado)**
+**No servidor Ubuntu:**
 
 ```bash
-# No servidor Ubuntu
+# Navegar para o diretório base
 cd /opt/iot-gateway
 
-# Clonar repositório
-git clone https://github.com/RogerioVieira77/PI---IV---V1.git .
+# Clonar repositório (estrutura final: /opt/iot-gateway/PI---IV---V1/)
+git clone https://github.com/RogerioVieira77/PI---IV---V1.git
 
-# Ou se já tiver o código, apenas puxar atualizações
-git pull origin main
+# IMPORTANTE: Garantir permissões corretas após o clone
+sudo chown -R $USER:$USER /opt/iot-gateway/PI---IV---V1
+
+# Verificar estrutura e permissões
+ls -la /opt/iot-gateway/
+ls -la /opt/iot-gateway/PI---IV---V1/
+```
+
+**Estrutura resultante:**
+```
+/opt/iot-gateway/
+├── venv/                          # Ambiente virtual Python
+└── PI---IV---V1/                  # Repositório clonado
+    ├── backend/
+    ├── frontend/
+    ├── sensores/
+    ├── tests/
+    ├── config/
+    ├── docs/
+    ├── requirements.txt
+    └── ...
 ```
 
 ### 7.2 Instalar Dependências Python
@@ -322,21 +342,24 @@ git pull origin main
 cd /opt/iot-gateway
 source venv/bin/activate
 
-# Instalar dependências
+# Navegar para o diretório do projeto
+cd PI---IV---V1
+
+# Instalar dependências principais
 pip install -r requirements.txt
 
-# Se houver requirements da fase 2
+# Instalar dependências da fase 2 (MQTT)
 pip install -r backend/requirements-phase2.txt
 
 # Verificar instalações
-pip list
+pip list | grep -E "paho-mqtt|configparser"
 ```
 
 ### 7.3 Configurar Arquivos de Configuração
 
 ```bash
 # Editar configuração MQTT para usar IP do servidor
-nano backend/config/mqtt_config.ini
+nano /opt/iot-gateway/PI---IV---V1/backend/config/mqtt_config.ini
 ```
 
 **Ajustar para:**
@@ -359,8 +382,10 @@ rfid_topic = sensores/rfid/dados
 ### 7.4 Testar Aplicação Manualmente
 
 ```bash
-# Ativar ambiente virtual
-source /opt/iot-gateway/venv/bin/activate
+# Ativar ambiente virtual e navegar para o projeto
+cd /opt/iot-gateway
+source venv/bin/activate
+cd PI---IV---V1
 
 # Executar gateway
 python backend/gateway/gateway.py
@@ -372,6 +397,7 @@ python backend/gateway/gateway.py
 # Ativar ambiente virtual
 cd /opt/iot-gateway
 source venv/bin/activate
+cd PI---IV---V1
 
 # Executar testes
 python tests/test_mqtt_integration.py
@@ -399,8 +425,8 @@ Requires=mosquitto.service
 
 [Service]
 Type=simple
-User=ubuntu
-WorkingDirectory=/opt/iot-gateway
+User=rogeriovieira
+WorkingDirectory=/opt/iot-gateway/PI---IV---V1
 Environment="PATH=/opt/iot-gateway/venv/bin"
 ExecStart=/opt/iot-gateway/venv/bin/python backend/gateway/gateway.py
 Restart=on-failure
@@ -411,6 +437,8 @@ StandardError=journal
 [Install]
 WantedBy=multi-user.target
 ```
+
+**IMPORTANTE:** Ajuste o `User=` para seu usuário do servidor!
 
 ### 8.2 Ativar e Iniciar Serviço
 
@@ -606,6 +634,40 @@ Use este checklist para garantir que tudo foi instalado:
 ---
 
 ## 🚨 Solução de Problemas
+
+### Erro de permissões (Permission Denied)
+
+**Sintoma:** Erros ao instalar pacotes Python ou editar arquivos:
+```
+ERROR: [Errno 13] Permission denied
+File is unwritable
+```
+
+**Solução:**
+
+```bash
+# Ajustar proprietário de todo o diretório para seu usuário
+sudo chown -R $USER:$USER /opt/iot-gateway
+
+# Dar permissões adequadas
+sudo chmod -R 755 /opt/iot-gateway
+
+# Verificar permissões
+ls -la /opt/iot-gateway/
+ls -la /opt/iot-gateway/venv/
+ls -la /opt/iot-gateway/PI---IV---V1/
+
+# Agora você pode usar sem sudo
+cd /opt/iot-gateway
+source venv/bin/activate
+cd PI---IV---V1
+pip install -r requirements.txt  # Sem sudo!
+nano backend/config/mqtt_config.ini  # Sem sudo!
+```
+
+**Explicação:** Quando você cria diretórios em `/opt/` com `sudo`, eles pertencem ao root. Use `chown` para transferir a propriedade para seu usuário.
+
+---
 
 ### Mosquitto não inicia
 
