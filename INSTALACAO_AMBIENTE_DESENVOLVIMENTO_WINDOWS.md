@@ -668,6 +668,19 @@ COLLATE utf8mb4_unicode_ci;
 -- Criar usuário do projeto (se não criou durante instalação)
 CREATE USER 'ceu_tres_pontes'@'localhost' IDENTIFIED BY 'CeuTresPontes2025!';
 
+-- Se receber erro "ERROR 1396: Operation CREATE USER failed"
+-- significa que o usuário JÁ EXISTE. Neste caso, use um dos comandos abaixo:
+
+-- Opção 1: Apenas garantir as permissões (recomendado)
+-- GRANT ALL PRIVILEGES ON ceu_tres_pontes_db.* TO 'ceu_tres_pontes'@'localhost';
+
+-- Opção 2: Alterar a senha do usuário existente
+-- ALTER USER 'ceu_tres_pontes'@'localhost' IDENTIFIED BY 'CeuTresPontes2025!';
+
+-- Opção 3: Remover e recriar (se necessário)
+-- DROP USER 'ceu_tres_pontes'@'localhost';
+-- CREATE USER 'ceu_tres_pontes'@'localhost' IDENTIFIED BY 'CeuTresPontes2025!';
+
 -- Conceder privilégios
 GRANT ALL PRIVILEGES ON ceu_tres_pontes_db.* TO 'ceu_tres_pontes'@'localhost';
 
@@ -693,21 +706,30 @@ Se conectar, está OK! Digite `EXIT;` para sair.
 
 ### Passo 3: Inicializar as Tabelas (quando o backend estiver pronto)
 
-Com o ambiente virtual **ativado**, na pasta do projeto:
+Com o ambiente virtual **ativado**, na **raiz do projeto** (não na pasta backend):
 
 ```powershell
-# Navegar até a pasta backend
-cd backend
+# IMPORTANTE: Certifique-se de estar na RAIZ do projeto
+# Você deve estar em: C:\PI - IV - V1 (ou C:\Dev\PI---IV---V1)
+
+# Configurar FLASK_APP
+$env:FLASK_APP = "backend/app.py"
+
+# OU criar arquivo .flaskenv (recomendado - só precisa fazer uma vez)
+# notepad .flaskenv
+# Adicione: FLASK_APP=backend/app.py
 
 # Inicializar banco de dados
 flask init-db
 
-# OU usar Python diretamente
-python app.py init-db
+# OU usar Python diretamente (alternativa)
+python backend\app.py init-db
 
-# Voltar para raiz do projeto
-cd ..
+# Popular com dados de exemplo (opcional)
+flask seed-db
 ```
+
+**IMPORTANTE:** Execute sempre da **raiz do projeto**, não da pasta `backend/`!
 
 ---
 
@@ -1201,6 +1223,54 @@ waitress-serve --host=0.0.0.0 --port=5000 backend.app:app
 
 ### Problema: Erro de conexão com MySQL
 
+**Erro:** `ERROR 1396 (HY000): Operation CREATE USER failed for 'ceu_tres_pontes'@'localhost'`
+
+**Causa:** O usuário já existe no MySQL (provavelmente foi criado durante a instalação).
+
+**Solução 1 (Recomendada):** Verificar e conceder permissões
+
+No prompt do MySQL:
+
+```sql
+-- Verificar se o usuário existe
+SELECT User, Host FROM mysql.user WHERE User = 'ceu_tres_pontes';
+
+-- Se existir, apenas conceder permissões
+GRANT ALL PRIVILEGES ON ceu_tres_pontes_db.* TO 'ceu_tres_pontes'@'localhost';
+FLUSH PRIVILEGES;
+
+-- Verificar as permissões
+SHOW GRANTS FOR 'ceu_tres_pontes'@'localhost';
+```
+
+**Solução 2:** Alterar a senha
+
+```sql
+-- Se você não lembra a senha do usuário
+ALTER USER 'ceu_tres_pontes'@'localhost' IDENTIFIED BY 'CeuTresPontes2025!';
+GRANT ALL PRIVILEGES ON ceu_tres_pontes_db.* TO 'ceu_tres_pontes'@'localhost';
+FLUSH PRIVILEGES;
+```
+
+**Solução 3:** Recriar o usuário
+
+```sql
+-- Remover e recriar
+DROP USER 'ceu_tres_pontes'@'localhost';
+CREATE USER 'ceu_tres_pontes'@'localhost' IDENTIFIED BY 'CeuTresPontes2025!';
+GRANT ALL PRIVILEGES ON ceu_tres_pontes_db.* TO 'ceu_tres_pontes'@'localhost';
+FLUSH PRIVILEGES;
+```
+
+**Testar a conexão:**
+
+```powershell
+mysql -u ceu_tres_pontes -p ceu_tres_pontes_db
+# Digite a senha: CeuTresPontes2025!
+```
+
+### Problema: Erro de conexão com MySQL (outros casos)
+
 **Verifique:**
 
 1. MySQL está rodando: `Get-Service mysql80`
@@ -1212,6 +1282,47 @@ waitress-serve --host=0.0.0.0 --port=5000 backend.app:app
 
 ```powershell
 mysql -u ceu_tres_pontes -p ceu_tres_pontes_db
+```
+
+### Problema: Flask não encontra o módulo app
+
+**Erro:** `Error: Could not import 'app'` ou `Error: No such command 'init-db'`
+
+**Causa:** Você está executando os comandos Flask da pasta errada ou a variável `FLASK_APP` não está configurada.
+
+**Solução:**
+
+```powershell
+# 1. Voltar para RAIZ do projeto (não estar em backend/)
+cd "C:\PI - IV - V1"
+
+# 2. Verificar que ambiente virtual está ativado
+# Deve ter (venv) no prompt
+
+# 3. Configurar FLASK_APP
+$env:FLASK_APP = "backend/app.py"
+
+# 4. Verificar
+flask --version
+
+# 5. Executar comando
+flask init-db
+```
+
+**Solução Permanente:** Criar arquivo `.flaskenv` na raiz:
+
+```
+FLASK_APP=backend/app.py
+FLASK_ENV=development
+FLASK_DEBUG=True
+```
+
+Depois instalar: `pip install python-dotenv`
+
+**Alternativa:** Executar via Python diretamente:
+
+```powershell
+python backend\app.py init-db
 ```
 
 ### Problema: ModuleNotFoundError ao rodar testes
