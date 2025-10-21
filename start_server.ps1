@@ -1,10 +1,20 @@
 # ========================================
-# CEU TRES PONTES - INICIANDO SERVIDOR
+# CEU TRES PONTES - INICIANDO APENAS API FLASK
+# ========================================
+#
+# ⚠️  ATENÇÃO: Este script inicia APENAS a API Flask (porta 5000)
+# 
+# Para iniciar o SISTEMA COMPLETO (Páginas Web + API), use:
+#   .\start_all_servers.ps1
+#
 # ========================================
 
 Write-Host "`n========================================" -ForegroundColor Cyan
-Write-Host "CEU TRES PONTES - INICIANDO SERVIDOR" -ForegroundColor Cyan
+Write-Host "CEU TRES PONTES - INICIANDO API FLASK" -ForegroundColor Cyan
 Write-Host "========================================`n" -ForegroundColor Cyan
+
+Write-Host "💡 Dica: Para iniciar o sistema completo, use:" -ForegroundColor Yellow
+Write-Host "   .\start_all_servers.ps1`n" -ForegroundColor Green
 
 # Ir para o diretório do projeto
 Set-Location "C:\PI - IV - V1"

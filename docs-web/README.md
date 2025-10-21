@@ -2,7 +2,7 @@
 
 ## 📚 Visão Geral
 
-Aplicação web moderna para documentação arquitetônica do projeto IoT Gateway. Interface interativa inspirada em portais de documentação profissional, com navegação fluida, múltiplas seções e recursos de exportação.
+Aplicação web moderna para documentação completa do Sistema IoT do CEU Três Pontes. Interface interativa com documentação técnica detalhada da solução completa: 6 sensores ativos, Gateway MQTT, API REST com 29 endpoints, banco de dados MySQL com 6.000+ leituras e autenticação JWT.
 
 ## ✨ Características
 
@@ -23,11 +23,11 @@ Aplicação web moderna para documentação arquitetônica do projeto IoT Gatewa
    cd "c:\PI - IV - V1\docs-web"
    ```
 
-2. **Abra o arquivo `index.html` no navegador:**
-   - **Opção 1**: Clique duplo no arquivo `index.html`
+2. **Abra o arquivo `doc_arq.html` no navegador:**
+   - **Opção 1**: Clique duplo no arquivo `doc_arq.html`
    - **Opção 2**: Via PowerShell:
      ```powershell
-     start index.html
+     start doc_arq.html
      ```
    - **Opção 3**: Arraste o arquivo para o navegador
 
@@ -49,14 +49,14 @@ Acesse: http://localhost:8000
 
 #### VS Code Live Server:
 1. Instale a extensão "Live Server"
-2. Clique direito em `index.html`
+2. Clique direito em `doc_arq.html`
 3. Selecione "Open with Live Server"
 
 ## 📁 Estrutura de Arquivos
 
 ```
 docs-web/
-├── index.html              # Página principal
+├── doc_arq.html            # Documentação da Arquitetura (página principal)
 ├── assets/
 │   ├── css/
 │   │   └── main.css       # Estilos da aplicação
@@ -99,8 +99,9 @@ docs-web/
    - Formato de mensagens
 
 6. **Especificações API**
-   - Endpoints planejados (Fase 3)
-   - Contratos da API REST
+   - 29 Endpoints ativos organizados em 5 categorias
+   - Autenticação JWT implementada
+   - Documentação completa dos contratos REST
 
 7. **Modelo de Dados**
    - Entidades principais
@@ -200,7 +201,8 @@ docs-web/
 ## 📝 Manutenção
 
 ### Atualizar Conteúdo
-1. Edite `index.html` diretamente
+
+1. Edite `doc_arq.html` diretamente
 2. Modifique as seções `<section id="...">`
 3. Salve e recarregue no navegador
 
@@ -250,6 +252,6 @@ Para dúvidas ou problemas:
 
 ---
 
-**Versão**: 1.0.0  
-**Última atualização**: 15 de Outubro de 2025  
-**Desenvolvido para**: Projeto Integrador IV - IoT Gateway
+**Versão**: 2.0.0  
+**Última atualização**: 20 de Outubro de 2025  
+**Desenvolvido para**: Projeto Integrador IV - Sistema IoT Completo (CEU Três Pontes)

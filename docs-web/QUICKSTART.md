@@ -4,16 +4,16 @@
 
 ### Método 1: Abrir Diretamente
 1. Navegue até a pasta: `c:\PI - IV - V1\docs-web`
-2. Clique duplo em `index.html`
+2. Clique duplo em `doc_arq.html`
 
 ### Método 2: Via Explorador de Arquivos
 1. Abra o Windows Explorer
 2. Cole na barra de endereço: `c:\PI - IV - V1\docs-web`
-3. Clique duplo em `index.html`
+3. Clique duplo em `doc_arq.html`
 
 ### Método 3: Arrastar e Soltar
 1. Abra seu navegador (Chrome, Edge, Firefox)
-2. Arraste o arquivo `index.html` para a janela do navegador
+2. Arraste o arquivo `doc_arq.html` para a janela do navegador
 
 ## ✨ Recursos Principais
 
@@ -45,7 +45,7 @@ No header, você pode alternar entre:
 3. **Modelo de Solução**: Estrutura modular
 4. **Modelo de Topologia**: Infraestrutura e rede
 5. **Integrações**: LoRa, Zigbee, Sigfox, RFID
-6. **Especificações API**: Endpoints (planejado)
+6. **Especificações API**: 29 Endpoints ativos com JWT
 7. **Modelo de Dados**: Schemas e entidades
 8. **Segurança**: Políticas e medidas
 9. **Operações**: Guias operacionais
@@ -89,5 +89,5 @@ A aplicação é totalmente responsiva. Para testar:
 
 **Dica**: Para melhor experiência, use um navegador moderno como Chrome, Edge ou Firefox.
 
-**Desenvolvido para**: Projeto Integrador IV - IoT Gateway  
-**Versão**: 1.0.0
+**Desenvolvido para**: Projeto Integrador IV - Sistema IoT Completo (CEU Três Pontes)  
+**Versão**: 2.0.0 - Fase 3 Completa + Refatoração

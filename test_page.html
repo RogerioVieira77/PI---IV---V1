@@ -53,6 +53,34 @@
             margin-top: 15px;
         }
 
+        .doc-btn {
+            display: inline-block;
+            padding: 10px 25px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            margin-left: 15px;
+            transition: background 0.3s, transform 0.2s;
+            box-shadow: 0 3px 10px rgba(102, 126, 234, 0.3);
+        }
+
+        .doc-btn:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.5);
+        }
+
+        .header-actions {
+            margin-top: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
         .grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -210,7 +238,15 @@
         <div class="header">
             <h1>🎯 CEU Tres Pontes - API REST</h1>
             <p>Sistema de Controle de Acesso com IoT</p>
-            <span class="status" id="serverStatus">🔄 Verificando...</span>
+            <div class="header-actions">
+                <a href="smart_ceu.html" class="doc-btn" style="background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);">
+                    🏠 Smart CEU
+                </a>
+                <span class="status" id="serverStatus">🔄 Verificando...</span>
+                <a href="docs-web/doc_arq.html" class="doc-btn" target="_blank">
+                    📚 Documentação da Arquitetura
+                </a>
+            </div>
         </div>
 
         <div class="credentials">
