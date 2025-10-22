@@ -175,59 +175,78 @@ print_success "MySQL configurado: Database '${DB_NAME}' e usuário '${DB_USER}' 
 ################################################################################
 print_step "ETAPA 5/10: Configurando Mosquitto MQTT"
 
+# Parar serviço se estiver rodando
+systemctl stop mosquitto || true
+
 # Backup da config original
 if [ -f /etc/mosquitto/mosquitto.conf ] && [ ! -f /etc/mosquitto/mosquitto.conf.backup ]; then
     cp /etc/mosquitto/mosquitto.conf /etc/mosquitto/mosquitto.conf.backup
 fi
 
-# Criar nova configuração
-cat > /etc/mosquitto/mosquitto.conf << EOF
+# Criar configuração principal (sem duplicações)
+cat > /etc/mosquitto/mosquitto.conf << 'EOF'
+# Place your local configuration in /etc/mosquitto/conf.d/
+#
+# A full description of the configuration file is at
+# /usr/share/doc/mosquitto/examples/mosquitto.conf.example
+
+pid_file /run/mosquitto/mosquitto.pid
+
+persistence true
+persistence_location /var/lib/mosquitto/
+
+log_dest file /var/log/mosquitto/mosquitto.log
+
+include_dir /etc/mosquitto/conf.d
+EOF
+
+# Criar configuração específica do SmartCEU (sem duplicar valores)
+cat > /etc/mosquitto/conf.d/smartceu.conf << EOF
 # SmartCEU MQTT Configuration
-# Port customizado para evitar conflito
-listener ${MQTT_PORT}
+# Listener na porta customizada
+listener ${MQTT_PORT} 0.0.0.0
 protocol mqtt
 
 # Permitir conexões anônimas (para desenvolvimento)
 allow_anonymous true
 
-# Logs
-log_dest file /var/log/mosquitto/mosquitto.log
+# Log types (log_dest já definido no mosquitto.conf)
 log_type error
 log_type warning
 log_type notice
 log_type information
 
-# Persistência
-persistence true
-persistence_location /var/lib/mosquitto/
-
 # Configurações de conexão
 max_connections -1
 max_keepalive 3600
-
-# Arquivo de senhas (se autenticação estiver habilitada)
-password_file /etc/mosquitto/passwd
 EOF
 
-# Criar arquivo de senhas vazio
-touch /etc/mosquitto/passwd
-chmod 600 /etc/mosquitto/passwd
+# Ajustar permissões
+chown mosquitto:mosquitto /etc/mosquitto/conf.d/smartceu.conf
+chmod 644 /etc/mosquitto/conf.d/smartceu.conf
 
-# Criar usuário MQTT (opcional - comentado para allow_anonymous true)
-# mosquitto_passwd -b /etc/mosquitto/passwd ${MQTT_USER} ${MQTT_PASS}
+# Garantir que diretórios existem com permissões corretas
+mkdir -p /var/log/mosquitto
+mkdir -p /var/lib/mosquitto
+chown -R mosquitto:mosquitto /var/log/mosquitto
+chown -R mosquitto:mosquitto /var/lib/mosquitto
+chmod 755 /var/log/mosquitto
+chmod 755 /var/lib/mosquitto
 
 # Reiniciar serviço
-systemctl restart mosquitto
+systemctl daemon-reload
 systemctl enable mosquitto
+systemctl start mosquitto
 
 # Aguardar MQTT iniciar
-sleep 2
+sleep 3
 
 # Testar MQTT
 if systemctl is-active --quiet mosquitto; then
     print_success "Mosquitto MQTT configurado na porta ${MQTT_PORT}"
 else
     print_error "Falha ao iniciar Mosquitto"
+    echo "Ver logs: journalctl -xeu mosquitto.service"
     systemctl status mosquitto
     exit 1
 fi
