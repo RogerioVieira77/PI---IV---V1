@@ -2,7 +2,7 @@
 
 Sistema IoT de controle de acesso e contagem de pessoas utilizando múltiplos protocolos de comunicação.
 
-## 🎯 Fase Atual: FASE 2 - Gateway e MQTT ✅
+## 🎯 Fase Atual: FASE 2 - ✅
 
 ### Status Fase 1
 - ✅ Simulador LoRa
@@ -21,58 +21,8 @@ Sistema IoT de controle de acesso e contagem de pessoas utilizando múltiplos pr
 - ✅ Testes de integração
 - ✅ Documentação completa
 
-## 🚀 Quick Start
 
-### Fase 1: Testar Sensores
 
-```powershell
-# Windows PowerShell
-cd tests
-python test_simuladores.py
-```
-
-### Fase 2: Sistema Completo (MQTT)
-
-**1. Instalar Mosquitto:**
-```powershell
-# Via Chocolatey
-choco install mosquitto
-
-# Iniciar serviço
-net start mosquitto
-```
-
-**2. Instalar dependências Python:**
-```powershell
-pip install -r backend\requirements-phase2.txt
-```
-
-**3. Executar teste de integração:**
-```powershell
-python tests\test_mqtt_integration.py
-```
-
-### Exemplo de Uso - Gateway
-
-```python
-from backend.gateway import Gateway
-from sensores import LoRaSensor, ZigBeeSensor
-
-# Criar gateway
-gateway = Gateway()
-
-# Registrar sensores
-gateway.register_sensors([
-    LoRaSensor(location="Entrada Principal"),
-    ZigBeeSensor(location="Saída Norte")
-])
-
-# Iniciar (publica via MQTT automaticamente)
-gateway.start()
-
-# Ver estatísticas
-print(gateway.get_stats())
-```
 
 ## 📚 Documentação Completa
 
@@ -101,12 +51,9 @@ PI - IV - V1/
 
 ## 🛠️ Tecnologias
 
-**Em Uso:**
 - Python 3.12.3
 - Mosquitto MQTT Broker
 - paho-mqtt 1.6.1
-
-**Planejado:**
 - Flask
 - MySQL 8.0.43
 - Docker 27.5.1
@@ -114,5 +61,4 @@ PI - IV - V1/
 - PowerBI
 
 ---
-
-**Desenvolvido para o Parque CEU Tres Pontes**
+**Desenvolvido: UNIVESP - DRP14-PJI410-SALA-004GRUPO-005**
