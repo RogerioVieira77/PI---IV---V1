@@ -12,7 +12,11 @@ Média de 87 a 253 leituras diárias por tipo de sensor
 from app import create_app, db
 from app.models.pool_reading import PoolReading
 from datetime import datetime, timedelta, date, time
+from zoneinfo import ZoneInfo
 import random
+
+# Timezone do servidor
+TIMEZONE = ZoneInfo('America/Sao_Paulo')
 
 def generate_pool_readings():
     """Gera leituras simuladas para os sensores da piscina"""
@@ -52,7 +56,8 @@ def generate_pool_readings():
             
             # Para cada dia
             for day_offset in range(days_back, -1, -1):
-                reading_date = (datetime.now() - timedelta(days=day_offset)).date()
+                # Data com timezone correto
+                reading_date = (datetime.now(TIMEZONE) - timedelta(days=day_offset)).date()
                 
                 # Número de leituras neste dia (variado entre 87 e 253)
                 if sensor_type == 'water_quality':

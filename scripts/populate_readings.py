@@ -9,8 +9,12 @@ from app import create_app, db
 from app.models.sensor import Sensor
 from app.models.reading import Reading
 from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
 import random
 import json
+
+# Timezone do servidor
+TIMEZONE = ZoneInfo('America/Sao_Paulo')
 
 def generate_readings():
     """Gera leituras simuladas para todos os sensores"""
@@ -55,8 +59,8 @@ def generate_readings():
             
             # Gerar leituras para cada dia
             for day_offset in range(days_back, -1, -1):
-                # Data base do dia
-                day_date = datetime.now() - timedelta(days=day_offset)
+                # Data base do dia com timezone correto
+                day_date = datetime.now(TIMEZONE) - timedelta(days=day_offset)
                 day_start = day_date.replace(hour=6, minute=0, second=0, microsecond=0)
                 day_end = day_date.replace(hour=22, minute=0, second=0, microsecond=0)
                 
