@@ -45,6 +45,7 @@ fi
 # Criar configuração correta
 print_step "Criando nova configuração..."
 
+# Apenas configurações específicas do SmartCEU (sem duplicar valores do mosquitto.conf)
 cat > /etc/mosquitto/conf.d/smartceu.conf << 'EOF'
 # SmartCEU MQTT Configuration
 # Listener na porta customizada
@@ -54,22 +55,18 @@ protocol mqtt
 # Permitir conexões anônimas (para desenvolvimento)
 allow_anonymous true
 
-# Log types (log_dest já definido no mosquitto.conf principal)
+# Log types (log_dest já definido no mosquitto.conf)
 log_type error
 log_type warning
 log_type notice
 log_type information
-
-# Persistência (já definido no mosquitto.conf principal, mas não causa conflito)
-persistence true
-persistence_location /var/lib/mosquitto/
 
 # Configurações de conexão
 max_connections -1
 max_keepalive 3600
 EOF
 
-# Restaurar config original do Mosquitto (sem duplicar persistence)
+# Restaurar config original do Mosquitto
 cat > /etc/mosquitto/mosquitto.conf << 'EOF'
 # Place your local configuration in /etc/mosquitto/conf.d/
 #
