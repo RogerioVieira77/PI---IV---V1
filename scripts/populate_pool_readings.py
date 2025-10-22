@@ -57,7 +57,17 @@ def generate_pool_readings():
             # Para cada dia
             for day_offset in range(days_back, -1, -1):
                 # Data com timezone correto
-                reading_date = (datetime.now(TIMEZONE) - timedelta(days=day_offset)).date()
+                now_with_tz = datetime.now(TIMEZONE)
+                reading_date = (now_with_tz - timedelta(days=day_offset)).date()
+                
+                # Para o dia atual, limitar hora ao horário atual
+                is_today = (day_offset == 0)
+                current_hour = now_with_tz.hour
+                max_hour = current_hour if is_today else end_hour
+                
+                # Não gerar leituras se ainda não chegou ao horário de abertura hoje
+                if is_today and current_hour < start_hour:
+                    continue
                 
                 # Número de leituras neste dia (variado entre 87 e 253)
                 if sensor_type == 'water_quality':
@@ -67,13 +77,29 @@ def generate_pool_readings():
                     # Temperaturas são medidas mais frequentemente
                     num_readings = random.randint(87, 253)
                 
+                # Para hoje, ajustar o número de leituras proporcionalmente
+                if is_today:
+                    hours_elapsed = current_hour - start_hour + 1
+                    total_hours = end_hour - start_hour + 1
+                    num_readings = int(num_readings * hours_elapsed / total_hours)
+                
                 # Gerar leituras distribuídas ao longo do dia
                 for _ in range(num_readings):
-                    # Hora aleatória entre start_hour e end_hour
-                    hour = random.randint(start_hour, end_hour)
-                    minute = random.randint(0, 59)
+                    # Hora aleatória entre start_hour e max_hour
+                    hour = random.randint(start_hour, max_hour)
+                    
+                    # Para a hora atual, limitar os minutos
+                    if is_today and hour == current_hour:
+                        minute = random.randint(0, now_with_tz.minute)
+                    else:
+                        minute = random.randint(0, 59)
+                    
                     second = random.randint(0, 59)
-                    reading_time = time(hour, minute, second)
+                    
+                    # Criar datetime completo com timezone e depois extrair o time
+                    dt = datetime(reading_date.year, reading_date.month, reading_date.day, 
+                                  hour, minute, second, tzinfo=TIMEZONE)
+                    reading_time = dt.time().replace(tzinfo=None)  # MySQL TIME não suporta timezone
                     
                     # Gerar valores baseados no tipo de sensor e hora do dia
                     reading_data = generate_sensor_value(
