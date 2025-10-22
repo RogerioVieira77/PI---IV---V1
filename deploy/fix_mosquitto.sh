@@ -101,15 +101,9 @@ chmod 755 /var/lib/mosquitto
 
 print_success "Permissões ajustadas"
 
-# Testar configuração
+# Testar configuração (sem opção -t que não existe na versão 2.x)
 print_step "Testando configuração..."
-if mosquitto -c /etc/mosquitto/mosquitto.conf -t 2>&1 | grep -q "Error"; then
-    print_error "Erro na configuração do Mosquitto"
-    mosquitto -c /etc/mosquitto/mosquitto.conf -t
-    exit 1
-fi
-
-print_success "Configuração válida"
+print_success "Configuração criada (validação será feita ao iniciar o serviço)"
 
 # Reiniciar serviço
 print_step "Reiniciando Mosquitto..."
