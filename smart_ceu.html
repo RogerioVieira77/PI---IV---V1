@@ -403,17 +403,17 @@
             </div>
             <ul class="navbar-menu">
                 <li class="navbar-item">
-                    <a href="smart_ceu.html" class="navbar-link active">
+                    <a href="/smartceu" class="navbar-link active">
                         🏠 Início
                     </a>
                 </li>
                 <li class="navbar-item">
-                    <a href="monitoramento_piscina.html" class="navbar-link">
+                    <a href="/smartceu/pool" class="navbar-link">
                         🏊‍♂️ Monitoramento da Piscina
                     </a>
                 </li>
                 <li class="navbar-item">
-                    <a href="docs-web/doc_arq.html" class="navbar-link" target="_blank">
+                    <a href="/smartceu/assets/doc_arq.html" class="navbar-link" target="_blank">
                         📚 Documentação da Arquitetura
                     </a>
                 </li>
@@ -492,7 +492,7 @@
                     Sistema de monitoramento ambiental da piscina com sensores de temperatura da água, temperatura ambiente e análise de qualidade da água em tempo real com alertas automáticos.
                 </div>
                 <div class="card-actions">
-                    <a href="monitoramento_piscina.html" class="btn btn-primary">
+                    <a href="/smartceu/pool" class="btn btn-primary">
                         🏊 Ver Monitoramento
                     </a>
                 </div>
@@ -599,8 +599,8 @@
     <script>
         // Atualizar estatísticas dinamicamente (opcional)
         async function loadStats() {
-            const BASE_URL = 'http://localhost:5000';
-            const API_URL = `${BASE_URL}/api/v1`;
+            const BASE_URL = window.location.origin;
+            const API_URL = `${BASE_URL}/smartceu/api/v1`;
 
             try {
                 // Auto-login
