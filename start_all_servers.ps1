@@ -24,7 +24,7 @@ Write-Host "📱 IP na rede local: $ip`n" -ForegroundColor Green
 # SERVIDOR 1: HTTP Server (Páginas Web - Porta 8000)
 # ============================================================
 
-Write-Host "[1/2] Iniciando Servidor HTTP (Páginas Web)..." -ForegroundColor Yellow
+Write-Host "[1/3] Iniciando Servidor HTTP (Páginas Web)..." -ForegroundColor Yellow
 Write-Host "      Porta: 8000" -ForegroundColor Gray
 
 Start-Job -Name "HTTPServer" -ScriptBlock {
@@ -53,7 +53,7 @@ if ($httpRunning) {
 # SERVIDOR 2: Flask API (Backend - Porta 5000)
 # ============================================================
 
-Write-Host "[2/2] Iniciando API Flask (Backend)..." -ForegroundColor Yellow
+Write-Host "[2/3] Iniciando API Flask (Backend)..." -ForegroundColor Yellow
 Write-Host "      Porta: 5000" -ForegroundColor Gray
 
 Start-Job -Name "FlaskAPI" -ScriptBlock {
@@ -81,6 +81,24 @@ if ($flaskRunning) {
 }
 
 # ============================================================
+# SERVIDOR 3: Pool Simulators (Sensores da Piscina)
+# ============================================================
+
+Write-Host "[3/3] Iniciando Simuladores da Piscina..." -ForegroundColor Yellow
+Write-Host "      Intervalo: 30 segundos" -ForegroundColor Gray
+
+Start-Job -Name "PoolSimulators" -ScriptBlock {
+    Set-Location "C:\PI - IV - V1"
+    & .\venv\Scripts\Activate.ps1
+    Set-Location "backend"
+    python pool_simulators.py
+} | Out-Null
+
+Start-Sleep -Seconds 2
+
+Write-Host "      ✅ Simuladores da piscina iniciados!`n" -ForegroundColor Green
+
+# ============================================================
 # RESUMO DE ACESSO
 # ============================================================
 
@@ -100,6 +118,10 @@ Write-Host "      http://localhost:8000/docs-web/doc_arq.html`n" -ForegroundColo
 Write-Host "   🧪 Página de Teste:" -ForegroundColor White
 Write-Host "      http://${ip}:8000/test_page.html" -ForegroundColor Yellow
 Write-Host "      http://localhost:8000/test_page.html`n" -ForegroundColor Gray
+
+Write-Host "   🏊 Monitoramento da Piscina:" -ForegroundColor White
+Write-Host "      http://${ip}:8000/monitoramento_piscina.html" -ForegroundColor Yellow
+Write-Host "      http://localhost:8000/monitoramento_piscina.html`n" -ForegroundColor Gray
 
 Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor DarkGray
 
@@ -127,10 +149,11 @@ Write-Host "   2. Acesse: http://${ip}:8000/smart_ceu.html`n" -ForegroundColor G
 Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor DarkGray
 
 Write-Host "`n⚙️  GERENCIAR SERVIDORES:" -ForegroundColor Cyan
-Write-Host "   📋 Ver status:    Get-Job" -ForegroundColor White
-Write-Host "   🛑 Parar todos:   Get-Job | Stop-Job; Get-Job | Remove-Job" -ForegroundColor White
-Write-Host "   📊 Ver logs HTTP: Receive-Job -Name HTTPServer" -ForegroundColor White
-Write-Host "   📊 Ver logs API:  Receive-Job -Name FlaskAPI`n" -ForegroundColor White
+Write-Host "   📋 Ver status:       Get-Job" -ForegroundColor White
+Write-Host "   🛑 Parar todos:      Get-Job | Stop-Job; Get-Job | Remove-Job" -ForegroundColor White
+Write-Host "   📊 Ver logs HTTP:    Receive-Job -Name HTTPServer" -ForegroundColor White
+Write-Host "   📊 Ver logs API:     Receive-Job -Name FlaskAPI" -ForegroundColor White
+Write-Host "   🏊 Ver logs Piscina: Receive-Job -Name PoolSimulators`n" -ForegroundColor White
 
 Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor DarkGray
 
@@ -152,11 +175,13 @@ while ($true) {
     $jobs = Get-Job
     $httpJob = $jobs | Where-Object { $_.Name -eq "HTTPServer" }
     $flaskJob = $jobs | Where-Object { $_.Name -eq "FlaskAPI" }
+    $poolJob = $jobs | Where-Object { $_.Name -eq "PoolSimulators" }
     
-    if ($httpJob.State -ne "Running" -or $flaskJob.State -ne "Running") {
+    if ($httpJob.State -ne "Running" -or $flaskJob.State -ne "Running" -or $poolJob.State -ne "Running") {
         Write-Host "`n⚠️  ATENÇÃO: Um ou mais servidores pararam!" -ForegroundColor Red
-        Write-Host "HTTP Server: $($httpJob.State)" -ForegroundColor Yellow
-        Write-Host "Flask API:   $($flaskJob.State)" -ForegroundColor Yellow
+        Write-Host "HTTP Server:      $($httpJob.State)" -ForegroundColor Yellow
+        Write-Host "Flask API:        $($flaskJob.State)" -ForegroundColor Yellow
+        Write-Host "Pool Simulators:  $($poolJob.State)" -ForegroundColor Yellow
         break
     }
 }
