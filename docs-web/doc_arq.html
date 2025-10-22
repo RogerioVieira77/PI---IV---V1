@@ -11,31 +11,11 @@
     <!-- Header -->
     <header class="main-header">
         <div class="container">
-            <div class="header-content">
-                <div class="logo">
+            <div class="header-content" style="justify-content: center;">
+                <a href="http://82.25.75.88/smartceu" class="logo" style="text-decoration: none; color: inherit;">
                     <i class="fas fa-network-wired"></i>
                     <span>IoT Gateway · Arquitetura</span>
-                </div>
-                <nav class="main-nav">
-                    <a href="../smart_ceu.html" class="nav-link" target="_top" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 8px 16px; border-radius: 8px;">
-                        <i class="fas fa-home"></i> Smart CEU
-                    </a>
-                    <a href="#home" class="nav-link active">Início</a>
-                    <a href="#architecture" class="nav-link">Proposta Arquitetônica</a>
-                    <a href="#technical" class="nav-link">Documentação Técnica</a>
-                    <a href="#integrations" class="nav-link">Integrações</a>
-                </nav>
-                <div class="header-actions">
-                    <select id="scopeSelector" class="scope-selector">
-                        <option value="GLOBAL">Scope: GLOBAL</option>
-                        <option value="BACKEND">Scope: BACKEND</option>
-                        <option value="FRONTEND">Scope: FRONTEND</option>
-                        <option value="SENSORS">Scope: SENSORS</option>
-                    </select>
-                    <button class="btn-export" onclick="exportDocs()">
-                        <i class="fas fa-download"></i> Export
-                    </button>
-                </div>
+                </a>
             </div>
         </div>
     </header>
@@ -94,6 +74,12 @@
                 </div>
                 <div class="nav-item" onclick="navigateTo('adrs')">
                     <i class="fas fa-file-alt"></i> ADRs
+                </div>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Casos de Uso</div>
+                <div class="nav-item" onclick="navigateTo('use-case-pool')">
+                    <i class="fas fa-swimming-pool"></i> Monitoramento da Piscina
                 </div>
             </div>
         </nav>
@@ -1056,6 +1042,348 @@ SELECT * FROM sensors WHERE status='active';  -- Sensores ativos</code></pre>
                 </div>
                 <h1>Architecture Decision Records</h1>
                 <p>Registro de decisões arquiteturais importantes.</p>
+            </section>
+
+            <!-- Caso de Uso: Monitoramento da Piscina -->
+            <section id="use-case-pool" class="content-section">
+                <div class="breadcrumb">
+                    <a href="#home">Início</a> / Casos de Uso / <span>Monitoramento da Piscina</span>
+                </div>
+                <h1><i class="fas fa-swimming-pool"></i> Monitoramento da Piscina</h1>
+                
+                <div class="info-box">
+                    <h3>Visão Geral</h3>
+                    <p>Sistema completo de monitoramento da piscina do CEU Três Pontes, com coleta de dados de temperatura e qualidade da água em tempo real, armazenamento em banco de dados, e visualização através de dashboard interativo.</p>
+                </div>
+
+                <h2>1. Objetivos</h2>
+                <ul>
+                    <li>Monitorar continuamente a temperatura da água da piscina</li>
+                    <li>Monitorar a temperatura ambiente ao redor da piscina</li>
+                    <li>Avaliar e registrar a qualidade da água (Ótima, Boa, Regular, Imprópria)</li>
+                    <li>Gerar alertas quando a qualidade da água não estiver adequada</li>
+                    <li>Fornecer histórico de médias diárias de temperatura</li>
+                    <li>Apresentar estatísticas agregadas do período</li>
+                </ul>
+
+                <h2>2. Atores</h2>
+                <ul>
+                    <li><strong>Administrador do Sistema:</strong> Gerencia usuários e configurações</li>
+                    <li><strong>Operador do CEU:</strong> Monitora os dados da piscina e responde a alertas</li>
+                    <li><strong>Sensores IoT:</strong> Coletam dados de temperatura e qualidade da água</li>
+                    <li><strong>Sistema de Alertas:</strong> Notifica sobre condições inadequadas da água</li>
+                </ul>
+
+                <h2>3. Arquitetura do Sistema</h2>
+                
+                <h3>3.1 Componentes</h3>
+                <div class="code-block">
+<pre>┌─────────────────┐
+│   Sensores IoT  │ (Temperatura da Água, Temperatura Ambiente, Qualidade)
+└────────┬────────┘
+         │
+         ↓
+┌─────────────────┐
+│  MQTT Broker    │ (Mosquitto - Porta 1884)
+└────────┬────────┘
+         │
+         ↓
+┌─────────────────┐
+│  Gateway IoT    │ (Python - Processa mensagens MQTT)
+└────────┬────────┘
+         │
+         ↓
+┌─────────────────┐
+│   Backend API   │ (Flask + SQLAlchemy - Porta 5000)
+└────────┬────────┘
+         │
+         ├─────→ MySQL Database (smartceu_db)
+         │
+         ↓
+┌─────────────────┐
+│  NGINX Reverse  │ (Porta 80 - /smartceu)
+│     Proxy       │
+└────────┬────────┘
+         │
+         ↓
+┌─────────────────┐
+│   Dashboard     │ (HTML/JS - Chart.js)
+│   Web Frontend  │
+└─────────────────┘</pre>
+                </div>
+
+                <h3>3.2 Fluxo de Dados</h3>
+                <ol>
+                    <li><strong>Coleta:</strong> Sensores coletam dados a cada intervalo programado</li>
+                    <li><strong>Transmissão:</strong> Dados enviados via MQTT para tópicos específicos</li>
+                    <li><strong>Processamento:</strong> Gateway recebe, formata e envia para API</li>
+                    <li><strong>Armazenamento:</strong> API valida e persiste dados no MySQL</li>
+                    <li><strong>Disponibilização:</strong> API expõe endpoints REST autenticados (JWT)</li>
+                    <li><strong>Visualização:</strong> Dashboard consulta API e renderiza gráficos</li>
+                    <li><strong>Alertas:</strong> Sistema verifica qualidade e gera alertas quando necessário</li>
+                </ol>
+
+                <h2>4. Modelo de Dados</h2>
+                
+                <h3>4.1 Tabela: pool_readings</h3>
+                <div class="code-block">
+<pre>CREATE TABLE pool_readings (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    sensor_type VARCHAR(20) NOT NULL,           -- 'water_temp', 'ambient_temp', 'water_quality'
+    reading_date DATE NOT NULL,                 -- Data da leitura
+    reading_time TIME NOT NULL,                 -- Hora da leitura (timezone local)
+    temperature DECIMAL(5,2),                   -- Temperatura em °C (2 decimais)
+    water_quality VARCHAR(20),                  -- 'Ótima', 'Boa', 'Regular', 'Imprópria'
+    created_at DATETIME NOT NULL,               -- Timestamp de criação do registro
+    updated_at DATETIME NOT NULL,               -- Timestamp de atualização
+    INDEX idx_sensor_type (sensor_type),
+    INDEX idx_reading_date (reading_date)
+);</pre>
+                </div>
+
+                <h3>4.2 Tipos de Sensores</h3>
+                <ul>
+                    <li><strong>water_temp:</strong> Temperatura da água da piscina (20-35°C)</li>
+                    <li><strong>ambient_temp:</strong> Temperatura ambiente (15-40°C)</li>
+                    <li><strong>water_quality:</strong> Qualidade da água (sem temperatura)</li>
+                </ul>
+
+                <h2>5. API Endpoints</h2>
+
+                <h3>5.1 Autenticação</h3>
+                <div class="code-block">
+<pre>POST /api/v1/auth/login
+{
+    "username": "admin",
+    "password": "admin123"
+}
+
+Response:
+{
+    "access_token": "eyJ0eXAiOiJKV1QiLCJhbGc...",
+    "user": {
+        "id": 1,
+        "username": "admin",
+        "role": "admin"
+    }
+}</pre>
+                </div>
+
+                <h3>5.2 Últimas Leituras</h3>
+                <div class="code-block">
+<pre>GET /api/v1/pool/readings/latest
+Headers: Authorization: Bearer {token}
+
+Response:
+{
+    "data": {
+        "water_temp": {
+            "id": 12345,
+            "sensor_type": "water_temp",
+            "reading_date": "2025-10-22",
+            "reading_time": "16:02:53",
+            "temperature": 25.46
+        },
+        "ambient_temp": { ... },
+        "water_quality": {
+            "water_quality": "Ótima"
+        }
+    }
+}</pre>
+                </div>
+
+                <h3>5.3 Média Diária de Temperatura</h3>
+                <div class="code-block">
+<pre>GET /api/v1/pool/temperature/daily-average?sensor_type=water_temp&days=10
+Headers: Authorization: Bearer {token}
+
+Response:
+{
+    "data": [
+        {
+            "date": "2025-10-13",
+            "avg_temperature": 26.26,
+            "reading_count": 183
+        },
+        {
+            "date": "2025-10-14",
+            "avg_temperature": 26.26,
+            "reading_count": 240
+        },
+        ...
+    ],
+    "sensor_type": "water_temp",
+    "period_days": 10
+}</pre>
+                </div>
+
+                <h3>5.4 Estatísticas</h3>
+                <div class="code-block">
+<pre>GET /api/v1/pool/statistics?days=7
+Headers: Authorization: Bearer {token}
+
+Response:
+{
+    "data": {
+        "water_temp": {
+            "avg": 26.25,
+            "min": 24.50,
+            "max": 28.00,
+            "count": 1234
+        },
+        "ambient_temp": { ... },
+        "water_quality": {
+            "distribution": {
+                "Ótima": 850,
+                "Boa": 100,
+                "Regular": 40,
+                "Imprópria": 10
+            }
+        }
+    }
+}</pre>
+                </div>
+
+                <h3>5.5 Alertas de Qualidade</h3>
+                <div class="code-block">
+<pre>GET /api/v1/pool/alerts
+Headers: Authorization: Bearer {token}
+
+Response:
+{
+    "data": [
+        {
+            "id": 456,
+            "sensor_type": "water_quality",
+            "reading_date": "2025-10-22",
+            "reading_time": "14:30:00",
+            "water_quality": "Imprópria",
+            "alert_level": "high"
+        }
+    ]
+}</pre>
+                </div>
+
+                <h2>6. Dashboard Web</h2>
+
+                <h3>6.1 Funcionalidades</h3>
+                <ul>
+                    <li><strong>Cards de Status:</strong> Exibem última leitura de cada sensor em tempo real</li>
+                    <li><strong>Gráficos de Histórico:</strong> Média diária dos últimos 10 dias (Chart.js)</li>
+                    <li><strong>Estatísticas do Período:</strong> Médias, mínimas e máximas</li>
+                    <li><strong>Lista de Alertas:</strong> Histórico de alertas de qualidade inadequada</li>
+                    <li><strong>Atualização Automática:</strong> Dados atualizados a cada 30 segundos</li>
+                </ul>
+
+                <h3>6.2 Componentes Visuais</h3>
+                <ul>
+                    <li><strong>Card Temperatura da Água:</strong> Valor atual + timestamp formatado (DD/MM/YYYY HH:MM)</li>
+                    <li><strong>Card Temperatura Ambiente:</strong> Valor atual + timestamp</li>
+                    <li><strong>Card Qualidade da Água:</strong> Status com código de cores (verde/amarelo/laranja/vermelho)</li>
+                    <li><strong>Gráfico Temperatura da Água:</strong> Linha azul com médias diárias</li>
+                    <li><strong>Gráfico Temperatura Ambiente:</strong> Linha laranja com médias diárias</li>
+                    <li><strong>Tabela de Alertas:</strong> Lista filtrada das últimas 24h</li>
+                </ul>
+
+                <h3>6.3 Formatação de Dados</h3>
+                <ul>
+                    <li>Temperaturas: 2 casas decimais (ex: 25.46°C)</li>
+                    <li>Datas: Formato brasileiro DD/MM/YYYY</li>
+                    <li>Horários: HH:MM (24h)</li>
+                    <li>Timezone: America/Sao_Paulo (UTC-3)</li>
+                </ul>
+
+                <h2>7. Decisões Técnicas</h2>
+
+                <h3>7.1 Timezone</h3>
+                <div class="info-box">
+                    <p><strong>Problema:</strong> Inicialmente, as leituras eram geradas em UTC, causando diferença de 3 horas com o horário local do servidor.</p>
+                    <p><strong>Solução:</strong> Implementação do uso de <code>zoneinfo.ZoneInfo('America/Sao_Paulo')</code> em todos os scripts de geração de dados.</p>
+                    <p><strong>Resultado:</strong> Dados armazenados com timestamp local correto, sem necessidade de conversão no frontend.</p>
+                </div>
+
+                <h3>7.2 Média Diária vs. Leituras Horárias</h3>
+                <div class="info-box">
+                    <p><strong>Problema:</strong> Gráficos com leituras individuais (hora a hora) ficavam poluídos e difíceis de interpretar.</p>
+                    <p><strong>Solução:</strong> Criação de endpoint dedicado (<code>/temperature/daily-average</code>) que calcula média de todas as leituras de cada dia.</p>
+                    <p><strong>Resultado:</strong> Gráficos limpos e informativos mostrando tendências ao longo de 10 dias.</p>
+                </div>
+
+                <h3>7.3 Separação de Date e Time</h3>
+                <div class="info-box">
+                    <p><strong>Decisão:</strong> Usar campos separados <code>reading_date (DATE)</code> e <code>reading_time (TIME)</code> ao invés de um único DATETIME.</p>
+                    <p><strong>Justificativa:</strong> Facilita queries de agregação por dia e evita complexidades de timezone em campos DATETIME do MySQL.</p>
+                    <p><strong>Trade-off:</strong> Necessário combinar os dois campos para exibição, mas queries de média diária ficam mais simples.</p>
+                </div>
+
+                <h2>8. Melhorias Implementadas</h2>
+
+                <h3>8.1 Correção de Horários Futuros</h3>
+                <p>Script de população ajustado para não gerar leituras com timestamp futuro no dia atual:</p>
+                <ul>
+                    <li>Dias passados: Leituras entre 6h e 22h (horário de funcionamento da piscina)</li>
+                    <li>Dia atual: Leituras apenas até a hora atual do servidor</li>
+                    <li>Quantidade proporcional: Número de leituras de hoje ajustado conforme horas decorridas</li>
+                </ul>
+
+                <h3>8.2 Formatação de Temperatura</h3>
+                <p>Padronização de todas as temperaturas para exatamente 2 casas decimais:</p>
+                <ul>
+                    <li>Banco de dados: <code>DECIMAL(5,2)</code></li>
+                    <li>API: Conversão para float com arredondamento</li>
+                    <li>Frontend: <code>parseFloat(value).toFixed(2)</code></li>
+                </ul>
+
+                <h3>8.3 Cache Control</h3>
+                <p>Configuração do NGINX para evitar cache de páginas HTML:</p>
+                <div class="code-block">
+<pre>add_header Cache-Control "no-store, no-cache, must-revalidate, max-age=0";
+add_header Pragma "no-cache";</pre>
+                </div>
+
+                <h2>9. Métricas e Performance</h2>
+
+                <h3>9.1 Volume de Dados (20 dias)</h3>
+                <ul>
+                    <li>Leituras de temperatura da água: ~3.700 registros</li>
+                    <li>Leituras de temperatura ambiente: ~3.100 registros</li>
+                    <li>Leituras de qualidade da água: ~940 registros</li>
+                    <li><strong>Total:</strong> ~7.740 registros de piscina</li>
+                </ul>
+
+                <h3>9.2 Distribuição de Qualidade</h3>
+                <ul>
+                    <li>Ótima: ~85%</li>
+                    <li>Boa: ~10%</li>
+                    <li>Regular: ~4%</li>
+                    <li>Imprópria: ~1%</li>
+                </ul>
+
+                <h3>9.3 Médias de Temperatura (Últimos 10 dias)</h3>
+                <ul>
+                    <li><strong>Água:</strong> 26.06°C - 26.47°C</li>
+                    <li><strong>Ambiente:</strong> 26.32°C - 28.20°C</li>
+                </ul>
+
+                <h2>10. Próximos Passos</h2>
+                <ul>
+                    <li>Implementar notificações push para alertas críticos</li>
+                    <li>Adicionar exportação de relatórios em PDF</li>
+                    <li>Criar dashboard mobile responsivo</li>
+                    <li>Integrar com sistema de gestão de manutenção</li>
+                    <li>Adicionar previsão de necessidade de manutenção baseada em tendências</li>
+                    <li>Implementar monitoramento de níveis de cloro e pH</li>
+                </ul>
+
+                <div class="info-box" style="margin-top: 2rem;">
+                    <h3>🔗 Links Relacionados</h3>
+                    <ul>
+                        <li><a href="http://82.25.75.88/smartceu/pool" target="_blank">Dashboard de Monitoramento</a></li>
+                        <li><a href="#api-specs">Especificações Completas da API</a></li>
+                        <li><a href="#data-model">Modelo de Dados Completo</a></li>
+                        <li><a href="#architecture">Arquitetura Geral do Sistema</a></li>
+                    </ul>
+                </div>
             </section>
         </div>
     </main>
