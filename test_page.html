@@ -379,7 +379,7 @@
 
         async function checkServer() {
             try {
-                const response = await fetch(`${BASE_URL}/health`, {
+                const response = await fetch(`${BASE_URL}/smartceu/health`, {
                     method: 'GET',
                     mode: 'cors',
                     cache: 'no-cache'
@@ -409,7 +409,7 @@
 
         async function testHealthCheck() {
             try {
-                const response = await fetch(`${BASE_URL}/health`);
+                const response = await fetch(`${BASE_URL}/smartceu/health`);
                 const data = await response.json();
                 showResult('result-health', data);
             } catch (error) {
