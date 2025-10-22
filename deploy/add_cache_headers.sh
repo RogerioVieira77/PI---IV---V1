@@ -66,16 +66,22 @@ server {
 
     # API do SmartCEU
     location /smartceu/api/ {
-        proxy_pass http://127.0.0.1:5000/;
+        proxy_pass http://127.0.0.1:5000/api/;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Content-Type $content_type;
         
-        # CORS headers
-        add_header Access-Control-Allow-Origin *;
-        add_header Access-Control-Allow-Methods 'GET, POST, PUT, DELETE, OPTIONS';
-        add_header Access-Control-Allow-Headers 'Content-Type, Authorization';
+        # CORS headers - Apenas se necessário
+        add_header Access-Control-Allow-Origin * always;
+        add_header Access-Control-Allow-Methods 'GET, POST, PUT, DELETE, OPTIONS' always;
+        add_header Access-Control-Allow-Headers 'Content-Type, Authorization' always;
+        
+        # Handle OPTIONS
+        if ($request_method = 'OPTIONS') {
+            return 204;
+        }
     }
 
     # Health check direto
