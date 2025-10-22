@@ -538,9 +538,12 @@
             if (data.water_temp) {
                 const reading = data.water_temp;
                 console.log('💧 Temperatura da água:', reading.temperature);
-                document.getElementById('waterTemp').textContent = `${reading.temperature}°C`;
-                document.getElementById('waterTempTime').textContent = 
-                    `${reading.reading_date} ${reading.reading_time}`;
+                const temp = parseFloat(reading.temperature).toFixed(2);
+                document.getElementById('waterTemp').textContent = `${temp}°C`;
+                
+                // Formatar data e hora
+                const dateTime = formatDateTime(reading.reading_date, reading.reading_time);
+                document.getElementById('waterTempTime').textContent = dateTime;
             } else {
                 console.warn('⚠️  Sem dados de temperatura da água');
             }
@@ -549,9 +552,12 @@
             if (data.ambient_temp) {
                 const reading = data.ambient_temp;
                 console.log('☀️ Temperatura ambiente:', reading.temperature);
-                document.getElementById('ambientTemp').textContent = `${reading.temperature}°C`;
-                document.getElementById('ambientTempTime').textContent = 
-                    `${reading.reading_date} ${reading.reading_time}`;
+                const temp = parseFloat(reading.temperature).toFixed(2);
+                document.getElementById('ambientTemp').textContent = `${temp}°C`;
+                
+                // Formatar data e hora
+                const dateTime = formatDateTime(reading.reading_date, reading.reading_time);
+                document.getElementById('ambientTempTime').textContent = dateTime;
             } else {
                 console.warn('⚠️  Sem dados de temperatura ambiente');
             }
@@ -575,10 +581,28 @@
                     qualityElement.classList.add('quality-improper');
                 }
                 
-                document.getElementById('waterQualityTime').textContent = 
-                    `${reading.reading_date} ${reading.reading_time}`;
+                // Formatar data e hora
+                const dateTime = formatDateTime(reading.reading_date, reading.reading_time);
+                document.getElementById('waterQualityTime').textContent = dateTime;
             } else {
                 console.warn('⚠️  Sem dados de qualidade da água');
+            }
+        }
+
+        // Função auxiliar para formatar data e hora
+        function formatDateTime(dateStr, timeStr) {
+            try {
+                // Parse da data (formato YYYY-MM-DD)
+                const [year, month, day] = dateStr.split('-');
+                
+                // Parse da hora (formato HH:MM:SS)
+                const [hour, minute] = timeStr.split(':');
+                
+                // Formatar: DD/MM/YYYY HH:MM
+                return `${day}/${month}/${year} ${hour}:${minute}`;
+            } catch (error) {
+                console.error('Erro ao formatar data/hora:', error);
+                return `${dateStr} ${timeStr}`;
             }
         }
 
