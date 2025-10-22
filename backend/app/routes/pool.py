@@ -252,6 +252,61 @@ def get_temperature_history():
         }), 500
 
 
+@pool_bp.route('/temperature/daily-average', methods=['GET'])
+@jwt_required()
+def get_daily_temperature_average():
+    """
+    Retorna a média diária de temperatura para gráficos.
+    
+    Requer autenticação JWT.
+    
+    Query Parameters:
+        sensor_type: 'water_temp' ou 'ambient_temp' (obrigatório)
+        days: Número de dias de histórico (padrão: 10)
+    
+    Returns:
+        200: Média diária de temperatura
+        400: Parâmetros inválidos
+        401: Não autenticado
+    """
+    try:
+        sensor_type = request.args.get('sensor_type')
+        
+        if not sensor_type:
+            return jsonify({
+                'error': 'Parâmetro sensor_type é obrigatório'
+            }), 400
+        
+        if sensor_type not in ['water_temp', 'ambient_temp']:
+            return jsonify({
+                'error': 'sensor_type deve ser water_temp ou ambient_temp'
+            }), 400
+        
+        days = request.args.get('days', default=10, type=int)
+        
+        if days < 1 or days > 365:
+            return jsonify({
+                'error': 'Parâmetro days deve estar entre 1 e 365'
+            }), 400
+        
+        daily_averages = PoolService.get_daily_temperature_average(
+            sensor_type=sensor_type,
+            days=days
+        )
+        
+        return jsonify({
+            'data': daily_averages,
+            'sensor_type': sensor_type,
+            'period_days': days
+        }), 200
+        
+    except Exception as e:
+        return jsonify({
+            'error': 'Erro interno do servidor',
+            'details': str(e)
+        }), 500
+
+
 @pool_bp.route('/alerts', methods=['GET'])
 @jwt_required()
 def get_alerts():

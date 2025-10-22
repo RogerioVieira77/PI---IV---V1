@@ -281,6 +281,66 @@ class PoolService:
         return readings
     
     @staticmethod
+    def get_daily_temperature_average(
+        sensor_type: str,
+        days: int = 10
+    ) -> List[Dict]:
+        """
+        Calcula a média diária de temperatura dos últimos N dias.
+        
+        Args:
+            sensor_type: 'water_temp' ou 'ambient_temp'
+            days: Número de dias de histórico (padrão: 10)
+            
+        Returns:
+            List[Dict]: Lista com a média de cada dia no formato:
+                        [{'date': 'YYYY-MM-DD', 'avg_temperature': float}, ...]
+        """
+        if sensor_type not in ['water_temp', 'ambient_temp']:
+            return []
+        
+        start_date = date.today() - timedelta(days=days - 1)
+        
+        # Buscar todas as leituras do período
+        readings = PoolReading.query.filter(
+            and_(
+                PoolReading.sensor_type == sensor_type,
+                PoolReading.reading_date >= start_date
+            )
+        ).order_by(
+            PoolReading.reading_date.asc()
+        ).all()
+        
+        # Agrupar por data e calcular média
+        daily_averages = {}
+        for reading in readings:
+            reading_date_str = reading.reading_date.isoformat()
+            
+            if reading_date_str not in daily_averages:
+                daily_averages[reading_date_str] = {
+                    'sum': 0,
+                    'count': 0
+                }
+            
+            if reading.temperature is not None:
+                daily_averages[reading_date_str]['sum'] += float(reading.temperature)
+                daily_averages[reading_date_str]['count'] += 1
+        
+        # Calcular médias e formatar resultado
+        result = []
+        for day_date in sorted(daily_averages.keys()):
+            data = daily_averages[day_date]
+            if data['count'] > 0:
+                avg_temp = round(data['sum'] / data['count'], 2)
+                result.append({
+                    'date': day_date,
+                    'avg_temperature': avg_temp,
+                    'reading_count': data['count']
+                })
+        
+        return result
+    
+    @staticmethod
     def check_water_quality_alerts() -> List[Dict]:
         """
         Verifica alertas de qualidade da água nas últimas 24 horas.
